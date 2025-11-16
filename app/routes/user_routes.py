@@ -1,7 +1,12 @@
 from flask import Blueprint, jsonify, request
 from ..models import User
 from ..extensions import db
-from ..services.user_service import create_user, check_password, toggle_user_active
+from ..services.user_service import (
+    create_user,
+    check_password,
+    get_user_report,
+    toggle_user_active,
+)
 
 user_bp = Blueprint("user_bp", __name__)
 
@@ -46,3 +51,21 @@ def profile():
     # Dummy profile route for the user
     # In a real system, you would have authentication and user session handling
     return jsonify({"message": "User profile information"}), 200
+
+
+@user_bp.route("/users/report", methods=["GET"])
+def user_report():
+    status = request.args.get("status", "all")
+
+    if status not in ["all", "active", "inactive"]:
+        return (
+            jsonify(
+                {
+                    "error": "Invalid status parameter. Use 'all', 'active', or 'inactive'"
+                }
+            ),
+            400,
+        )
+
+    report = get_user_report(status)
+    return jsonify(report), 200
