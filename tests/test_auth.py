@@ -58,3 +58,28 @@ def test_login_invalid_user(client):
 
     # Assert that the response status code is 401 (Unauthorized)
     assert response.status_code == 401
+
+
+# Test: New users should be created as inactive by default
+# - Register a user
+# - Fetch the user from the database
+# - Assert is_active is False
+# - Assert inactive_at is set (or matches your design)
+
+# Test: Inactive users cannot log in
+# - Register a user (starts inactive)
+# - Attempt to log in
+# - Expect login to fail with 401
+# - Expect error message indicating inactive user
+
+# Test: Toggle route sets user to active
+# - Register a user (inactive)
+# - Call /toggle-active route for that user
+# - Confirm user becomes active
+# - Confirm inactive_at is cleared
+
+# Test: Toggling a user to inactive sets inactive_at timestamp
+# - Register a user
+# - Activate them via toggle route
+# - Toggle again to make inactive
+# - Confirm inactive_at now contains a timestamp

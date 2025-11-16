@@ -18,6 +18,7 @@ def register():
 
 
 @user_bp.route("/login", methods=["POST"])
+# Rework /login to include logic for inactivity
 def login():
     data = request.get_json()
     email = data.get("email")
@@ -27,6 +28,9 @@ def login():
         return jsonify({"message": "Login successful", "email": email}), 200
     else:
         return jsonify({"message": "Invalid credentials"}), 401
+
+
+# Add new route for toggling active [PATCH]
 
 
 @user_bp.route("/profile", methods=["GET"])

@@ -25,3 +25,11 @@ def check_password(email, password):
         return True
     else:
         return False
+
+
+# Add toggle_user_active(user_id):
+# return
+# "user_id"
+# "username"
+# "is_active"
+# "inactive_since"
