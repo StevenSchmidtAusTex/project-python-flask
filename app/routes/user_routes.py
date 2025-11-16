@@ -46,3 +46,6 @@ def profile():
     # Dummy profile route for the user
     # In a real system, you would have authentication and user session handling
     return jsonify({"message": "User profile information"}), 200
+
+
+## ISSUE III Create route for user access report

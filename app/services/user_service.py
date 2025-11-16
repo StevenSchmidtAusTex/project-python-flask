@@ -53,3 +53,6 @@ def toggle_user_active(user_id):
         if user.inactive_since
         else None,
     }
+
+
+## ISSUE III add get_user_report
