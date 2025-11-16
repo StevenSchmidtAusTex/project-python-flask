@@ -55,4 +55,31 @@ def toggle_user_active(user_id):
     }
 
 
-## ISSUE III add get_user_report
+# New function to generate user access report.
+# Simplest approach, maintain a single DB query and readability
+# Prefer over Dictionary Dispatch, may provide more scalability
+def get_user_report(status="all"):
+    query = User.query
+
+    if status == "active":
+        query = query.filter(User.inactive_since.is_(None))
+    elif status == "inactive":
+        query = query.filter(User.inactive_since.isnot(None))
+
+    users = query.all()
+
+    user_list = [
+        {
+            "id": user.id,
+            "username": user.username,
+            "email": user.email,
+            "role": user.role,
+            "is_active": user.inactive_since is None,
+            "inactive_since": user.inactive_since.isoformat()
+            if user.inactive_since
+            else None,
+        }
+        for user in users
+    ]
+
+    return {"total_users": len(user_list), "status_filter": status, "users": user_list}
