@@ -1,252 +1,231 @@
-# project-python-flask
-This project is in support of efforts to hire python engineers.
+# Python Flask Project
 
+User management API with role-based access control and compliance reporting.
 
-# Getting Started
+## Implemented Features
 
-Ensure you can run the application locally by cloning it.
+1. GitHub Actions CI/CD - Automated linting and testing on every push and pull request
+2. Active Users Management - Users can be marked as active/inactive with timestamp tracking
+3. Access Reporting - Generate compliance reports showing users and their assigned roles
+4. Role Entity Model - Many-to-many relationship between users and roles with unique constraints
+5. Secrets Management - Environment-based configuration using `.env` files
 
-These directions assume you will use `poetry` for dependency and environment management.
+## Further Development (I may develop these prior to Final Interview)
 
+- Fix further security issues (such as passwords being in plain text)
+- Demonstrate debugging practices and IDE integration
+- PostGres migration would be also ideal
 
-## Install dependencies
-```sh
-poetry install
-```
+## Getting Started
 
-## Building the software
+**Prerequisites**
 
-### Linting
+- Python 3.12+
+- Poetry for dependency management
 
-You many need to install the [pre-commit project](https://pre-commit.com/#install)
+**Installation**
 
-Then run
+1. Clone the repository
+   ```powershell
+   git clone https://github.com/StevenSchmidtAusTex/project-python-flask.git
+   cd project-python-flask
+   ```
 
-```sh
-pre-commit run --all-files
-```
+2. Install dependencies
+   ```powershell
+   poetry install
+   ```
 
-You should get output showing "Passed" or (for json files) "Skipped"
+3. Set up environment variables
+   
+   Copy the .env file and generate a secret key:
+   ```powershell
+   Copy-Item .env.example .env
+   python -c "import secrets; print(secrets.token_hex(32))"
+   ```
+   
+   Update `.env` with generated secret key:
+   ```
+   SECRET_KEY=your-generated-secret-key-here
+   DATABASE_URI=sqlite:///users.db
+   FLASK_ENV=development
+   ```
 
-```
-trim trailing whitespace.................................................Passed
-fix end of files.........................................................Passed
-check yaml...............................................................Passed
-check json...........................................(no files to check)Skipped
-black....................................................................Passed
-```
+4. Initialize the database
+   ```powershell
+   poetry run flask db upgrade
+   ```
 
-### Automated tests
+5. Start the dev server
+   ```powershell
+   $env:FLASK_ENV="development"
+   poetry run python app.py
+   ```
 
-There are a couple of automated tests to run.
+   The API will be available at `http://127.0.0.1:5000`
 
-```sh
-poetry run pytest --verbose
-```
+## API Reference
 
-You should see something similar to:
+**Register a New User**
 
-```
-============================================================================================= test session starts ==============================================================================================
-platform darwin -- Python 3.12.6, pytest-8.3.3, pluggy-1.5.0 -- /Users/boyd.hemphill/Library/Caches/pypoetry/virtualenvs/project-python-flask-mx59eYov-py3.12/bin/python
-cachedir: .pytest_cache
-rootdir: /Users/boyd.hemphill/code/project-python-flask
-configfile: pyproject.toml
-testpaths: tests
-collected 3 items
+Note: New users are created as inactive by default and must be activated before login.
 
-tests/test_auth.py::test_register_user PASSED                                                                                                                                                            [ 33%]
-tests/test_auth.py::test_login_user PASSED                                                                                                                                                               [ 66%]
-tests/test_auth.py::test_login_invalid_user PASSED                                                                                                                                                       [100%]
-
-============================================================================================== 3 passed in 0.03s ===============================================================================================
-
-```
-
-## Starting the application
-
-```sh
-export FLASK_ENV=development # use the development settings
-poetry run python app.py
-```
-
-You should see something like this:
-
-```
-/code/project-python-flask >poetry run python run.py
- * Serving Flask app 'app'
- * Debug mode: on
-WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
- * Running on http://127.0.0.1:5000
-Press CTRL+C to quit
- * Restarting with stat
- * Debugger is active!
- * Debugger PIN: 413-423-614
- ```
-
-### Exercising the API
-
-Create a user that will allow you to authenticate. For ease of using the project you submit, please do not change the credentials.
-
-```sh
-curl \
-  -X POST http://127.0.0.1:5000/register \
-  -H "Content-Type: application/json" \
+```powershell
+curl -X POST http://127.0.0.1:5000/register `
+  -H "Content-Type: application/json" `
   -d '{"username":"Dev Userson", "email":"dev.userson@example.com", "password":"sosecure"}'
 ```
 
-Show that the user can log in:
+**Activate/Deactivate a User**
 
-```sh
-curl -X POST http://127.0.0.1:5000/login \
--H "Content-Type: application/json" \
--d '{"email":"dev.userson@example.com", "password":"sosecure"}'
+```powershell
+# Toggle user active status (replace 1 with actual user_id)
+curl -X PATCH http://127.0.0.1:5000/users/1/toggle-active
 ```
 
+**Login**
 
-# Tasks
+```powershell
+curl -X POST http://127.0.0.1:5000/login `
+  -H "Content-Type: application/json" `
+  -d '{"email":"dev.userson@example.com", "password":"sosecure"}'
+```
 
-For each task please follow this process:
-1. Create an issue in your Github project, you are welcome to copy the text of the task provided or write your own, but _please_ use the title here as the title of your GH issue.
-1. Add at least one test to your code showing your solution works and ensuring it will continue to work as expected.
-1. Make a PR to your code.
-1. Merge your PR when you are happy.
+Response for inactive user: `403 Forbidden`
 
-:information_source: - All input and response should be assumed to be via `curl`. There is no expectation of a front end being created for this project.
+**User Access Report (Compliance)**
 
-:warning: - Please manage your time. We expect between three and four hours of effort and the associated quality. If you would like to take more time you are welcome to do so, but it is in no way required.
+```powershell
+# All users
+curl http://127.0.0.1:5000/users/report
 
-Most importantly, _have fun_.  Show off a bit. Push an opinion or two forward to spark a discussion.
+# Active users only
+curl http://127.0.0.1:5000/users/report?status=active
 
-## Required
+# Inactive users only
+curl http://127.0.0.1:5000/users/report?status=inactive
+```
 
-The following are "required."  We recommend working these first and expect they will take between 2 and 3 hours to complete. If you do not have time to complete them all that is fine.  Ensure you have a priority list and are able to discuss why you prioritized them as you did.
+**Create a Role**
 
-### Github Action
+```powershell
+curl -X POST http://127.0.0.1:5000/roles `
+  -H "Content-Type: application/json" `
+  -d '{"role_name":"Developer", "department_name":"Engineering"}'
+```
 
-Create a Github action that runs the linting and automated tests. It is a Victory goal that humans don't look at code that is not linted to standard and passing tests unless there is a specfic reason (e.g. a draft pull request).
+Note: The combination of `role_name` and `department_name` must be unique.
 
-### Active users
+**List All Roles**
 
-As an application administrator I want to be able to mark a user as "inactive" so that they cannot log in or perform any actions on the system.
+```powershell
+curl http://127.0.0.1:5000/roles
+```
 
-Acceptance Criteria
-- User can be active or inactive
-- An inactive user cannot log in to the system
-- New users are created as Inactive by default
-- There is a route to hit to toggle active/inactive
-- The date a user is made inactive is recorded
+**Assign a Role to a User**
 
-### Access Report
+```powershell
+curl -X POST http://127.0.0.1:5000/users/1/roles `
+  -H "Content-Type: application/json" `
+  -d '{"role_id":1}'
+```
 
-As a compliance officer I want to be able to check a report that tells me who my users are and what their access level is so that I can conduct the monthly reviews and drive remediation as required by SOC 2 Type 2.
+**Get Roles for a User**
 
-Accpetance Criteria
-- Return a list of users, email and their role(s)
-- Be able to get the report for all users, inactive users and/or active users
+```powershell
+curl http://127.0.0.1:5000/users/1/roles
+```
 
-###  Add the role entity to the model
+**Remove a Role from a User**
 
-As an application admin I need to assign each user one or more roles so that they have a clear and predictable set of permissions.  I do not need to override roles at this time.
+```powershell
+curl -X DELETE http://127.0.0.1:5000/users/1/roles/1
+```
 
-Acceptance Criteria
-- Allow for the creation of one or more roles with attributes role_id, role_name and department_name
-  - the combination of role_name and department_name is unique
-- Allow for a user to be assigned one or more roles
-- Allow for a role to be assigned to one or more users.
-- Update the README.md to include how to create a role and assign a user to it in the "Getting Started" section.
+## Development
 
-### Fix our secrets in code issue
+**Linting**
 
-As a compliance officer I want our credentials and other sensitive information removed from source control and stored according to OWASP best practices so that our operations are hardened against external and internal attacks.
+Install and run pre-commit hooks:
+```powershell
+pre-commit install
+pre-commit run --all-files
+```
 
-In `config.py` there are secrets stored in plain text.
-1. Write a Github issue in your project describing the problem in a way you'd like to get it from a product manager/owner.
-1. Implement your solution and make a PR.
+**Testing**
 
-### Implement the profile route
+Run the test suite:
+```powershell
+poetry run pytest --verbose
+```
 
-:information_source: - See `app/routes/user_routes.py`
+Tests cover:
+- User registration and authentication
+- Active/inactive user management
+- Login restrictions for inactive users
+- Role creation and assignment
+- Compliance reporting
+- Error handling
 
-Write a detailed Github issue explaining your understanding of the requirements as _you_ infer them. Write them as if you will _not_ be the one to work on the task.
-- Implement per your requirements
-- Be sure to leave directions for how to test your solution in the PR.
+**CI/CD Pipeline**
 
-## Optional Tasks
+GitHub Actions runs linting and tests on every push and pull request. See `.github/workflows/ci.yml` for configuration.
 
-If you have some extra time and would like to show off a bit, the following are some suggestions to feed your creativity.  You are _encouraged_ to come up with, document and solve your own problem. Victory places a high value on engineers who work to ensure team efficiency.
+## Database Schema
 
-Think outside the box for all of this. For example maybe instead of fixing something you'd rather write out a list of several tickets and prioritize them. In this case we will discuss what you are suggesting, approaches and the like.
+**User Model**
+- `id` - Primary Key
+- `username` - Unique, Not Null
+- `email` - Unique, Not Null
+- `password` - Not Null (stored in plain text - known security issue)
+- `inactive_since` - DateTime, Nullable (tracks when user was deactivated)
+- Many-to-Many relationship with `Role`
 
-Alternatively you could find one thing that shows off a particular passion and dive as deep as you like.
+**Role Model**
+- `role_id` - Primary Key
+- `role_name` - Not Null
+- `department_name` - Not Null
+- Unique Constraint: (`role_name`, `department_name`)
+- Many-to-Many relationship with `User`
 
-Or, you could come up approach we have not thought of. Think of this as a way to shape your interiew towards your interests and passion.
+**Environment Configuration**
 
-:information_source: - If you decide to tackle something and run out of time, simply make a PR but don't merge it.  Note this in your email telling us where to find your project and it becomes a conversation piece for the final interview.
+- Environment Variables: Sensitive config stored in `.env` files (not in source control)
+- Config Validation: Production requires SECRET_KEY to be set
 
-### Find and fix a security issue
+## Database Migrations
 
-There are many issues of security with our application. You've seen above how we like to communicate tasks, so:
-- Write a ticket describing the problem from an end users perspective (As a ..., I want to ..., so that ...), then a list of acceptance criteria.
-- Implement the solution in the same way as the other tasks (PR, test, etc)
-- Be sure to include anything in the README to your fellow developers if you feel documenting any changes in their behavior would be helpful.
+```powershell
+# Create a new migration
+poetry run flask db migrate -m "Description of changes"
 
-### Improve the build
+# Apply migrations
+poetry run flask db upgrade
 
-Our build does some linting with `pre-commit` and runs our tests. If this is a project you are responsible for what would you add?
-- Write a ticket describing the gap in the build and the value prop for addressing it.
-- Implement the solution.
-- Be sure to include anything in the README to help your fellow developers with set up if you feel documentation is warranted.
+# Rollback migrations
+poetry run flask db downgrade
+```
 
-Remember that writing the ticket is 60% of what we are looking for here. Only implement if this is something you are passionate about.
+## Troubleshooting
 
-### Move us to Postgresql
+**Issue**: User cannot log in after registration
+- Solution: Activate the user first: `curl -X PATCH http://127.0.0.1:5000/users/{user_id}/toggle-active`
 
-SQLlite is great for something like an interview project. Most Victory projects are backed by Postgres or MySQL.
-- Write a ticket describing the work in detail.  Can you write something so technical from an end user perspective?
-- Implement your solution.
-- Be sure to include anything in the README to help your fellow developers with set up if you feel documentation is warranted.
+**Issue**: "SECRET_KEY environment variable is required"
+- Solution: Generate a key with `python -c "import secrets; print(secrets.token_hex(32))"` and add to `.env`
 
-### Show off your use of a debugger and its integration with your IDE
+## Implementation Notes
 
-Show us the lack of print statements in your code and how you go about tracking down values of variables and the like when looking for defects in the code.
+**Testing Approach**
 
-# Evaluation Criteria
+I used quite a few more test fixtures and helper functions in `test_roles.py` compared to the simpler approach in `test_auth.py`. The role tests needed to set up users, roles, and assignments repeatedly, so I created fixtures to avoid duplication. It made the tests more readable - instead of 20 lines of setup per test, I could just use the fixture and focus on what was actually being tested.
 
-The people evaluating your submission will do the following before we schedule the final interview.
+**Service Layer Pattern**
 
-On a global level, we are evaluating you on your ability
-- to communicate in writing (both code and general documentation)
-- to infer assumptions in the tasks
-- to prioritize tasks and effectively communicate why during the interview.
+The original repo had a `user_service.py` file, so when I added role management I created a matching `role_service.py` to stay consistent. This kept the route files relatively clean. They just handle request/response while the services do the actual database work.
 
-We will do the following:
-1. Clone and run your fork following the instructions in the README under "Getting Started".  We are simply checking to ensure the application functions as expected.
-   - We expect there to be instructions for testing the creation of roles and assigning users for us to use. (remember that we prize solid communication)
-2. Read each PR
-   - Be sure you have a good commit message that describes why the work is done like it is (not what was done, we can see that in the code)
-     - this is a chance to show off written communication skills
-   - Be sure your code has passed all checks in the build
-3. Attempt to run each PR to show that the code is in the expected functional state
-4. Attempt to run the test suite
-5. Read each Github issue you created and note if/how you tracked your progress.
+The biggest positive impact here was testing. It's significantly easier to test a function like `assign_role_to_user()` directly than to mock out Flask request objects. Plus if I ever need to call these functions from somewhere else, I wouldn't have to go through the route handlers.
 
-## Next Step - In Person Technical
+## Repository
 
-Within five business days we will respond to you to schedule a 90 minute in-person interview with Victory staff or a note to let you know we are going in a different direction.
-
-To prepare for the interview be ready to
-- demo a working project.
-  - Some candidates keep going because they are having fun.  That is just fine, but be sure you have a working project to demo
-- discuss your overall approach around priority, documentation, etc.
-- discuss specifics of implementing requirements
-
-Please note that folks on the team are often taking a position counter to your own. It is of primary importance that members of Victory teams can disagree, discuss and come to a common understanding and path forward.
-
-You should walk away with a solid understanding of what it is like to work on a Victory team on a daily basis. We understand that you may not want to work the way we do.  Better for all concerned if we figure that out as early as possible.
-
-# Thank you
-
-We are going to make six figure bet on you. You are going to put your career in our hands and expect us to help you grow professionally.
-
-We deeply appreciate the time you are taking to ensure joining Victory is of benefit to all concerned (yourself, Victory and our clients).
+https://github.com/StevenSchmidtAusTex/project-python-flask
