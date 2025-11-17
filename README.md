@@ -1,8 +1,8 @@
-### Python Flask Project
+# Python Flask Project
 
 User management API with role-based access control and compliance reporting.
 
-## Implemented Features
+### Implemented Features
 
 1. GitHub Actions CI/CD - Automated linting and testing on every push and pull request
 2. Active Users Management - Users can be marked as active/inactive with timestamp tracking
@@ -10,7 +10,7 @@ User management API with role-based access control and compliance reporting.
 4. Role Entity Model - Many-to-many relationship between users and roles with unique constraints
 5. Secrets Management - Environment-based configuration using `.env` files
 
-## Further Development (I may develop these prior to Final Interview)
+### Further Development (I may develop these prior to Final Interview)
 
 - Fix further security issues (such as passwords being in plain text)
 - Demonstrate debugging practices and IDE integration
