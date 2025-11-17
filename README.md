@@ -218,7 +218,7 @@ poetry run flask db downgrade
 
 **Testing Approach**
 
-I used quite a few more test fixtures and helper functions in `test_roles.py` compared to the simpler approach in `test_auth.py`. The role tests needed to set up users, roles, and assignments repeatedly, so I created fixtures to avoid duplication. It made the tests more readable - instead of 20 lines of setup per test, I could just use the fixture and focus on what was actually being tested.
+I used quite a few more test fixtures and helper functions in `test_roles.py` compared to the simpler approach in `test_auth.py`. The role tests needed to set up users, roles, and assignments repeatedly, so I created fixtures to avoid duplication. It improved readability due to fewer setup lines per test, I could just use the fixture and focus on what was actually being tested.
 
 **Service Layer Pattern**
 
