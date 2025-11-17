@@ -64,7 +64,7 @@ User management API with role-based access control and compliance reporting.
 
    The API will be available at `http://127.0.0.1:5000`
 
-## API Reference
+## Using the API
 
 **Register a New User**
 
