@@ -68,18 +68,29 @@ def get_user_report(status="all"):
 
     users = query.all()
 
-    user_list = [
-        {
-            "id": user.id,
-            "username": user.username,
-            "email": user.email,
-            "role": user.role,
-            "is_active": user.inactive_since is None,
-            "inactive_since": user.inactive_since.isoformat()
-            if user.inactive_since
-            else None,
-        }
-        for user in users
-    ]
+    user_list = []
+    for user in users:
+        roles = [
+            {
+                "role_id": role.role_id,
+                "role_name": role.role_name,
+                "department_name": role.department_name,
+            }
+            for role in user.roles
+        ]
+
+        # Append this user to the report
+        user_list.append(
+            {
+                "id": user.id,
+                "username": user.username,
+                "email": user.email,
+                "roles": roles,
+                "is_active": user.inactive_since is None,
+                "inactive_since": user.inactive_since.isoformat()
+                if user.inactive_since
+                else None,
+            }
+        )
 
     return {"total_users": len(user_list), "status_filter": status, "users": user_list}

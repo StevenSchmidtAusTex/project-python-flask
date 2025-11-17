@@ -12,14 +12,12 @@ def test_user_report_all_users(client, app):
             email="active@test.com",
             password="pass123",
             inactive_since=None,
-            role="user",
         )
         inactive_user = User(
             username="inactive_user",
             email="inactive@test.com",
             password="pass123",
             inactive_since=datetime.utcnow(),
-            role="admin",
         )
         db.session.add_all([active_user, inactive_user])
         db.session.commit()
@@ -41,14 +39,12 @@ def test_user_report_active_only(client, app):
             email="active2@test.com",
             password="pass123",
             inactive_since=None,
-            role="user",
         )
         inactive_user = User(
             username="inactive_user2",
             email="inactive2@test.com",
             password="pass123",
             inactive_since=datetime.utcnow(),
-            role="user",
         )
         db.session.add_all([active_user, inactive_user])
         db.session.commit()
@@ -71,14 +67,12 @@ def test_user_report_inactive_only(client, app):
             email="active3@test.com",
             password="pass123",
             inactive_since=None,
-            role="user",
         )
         inactive_user = User(
             username="inactive_user3",
             email="inactive3@test.com",
             password="pass123",
             inactive_since=datetime.utcnow(),
-            role="user",
         )
         db.session.add_all([active_user, inactive_user])
         db.session.commit()
@@ -101,7 +95,6 @@ def test_user_report_contains_required_fields(client, app):
             email="compliance@test.com",
             password="pass123",
             inactive_since=None,
-            role="admin",
         )
         db.session.add(user)
         db.session.commit()
@@ -119,12 +112,12 @@ def test_user_report_contains_required_fields(client, app):
     assert "id" in user_data
     assert "username" in user_data
     assert "email" in user_data
-    assert "role" in user_data
+    assert "roles" in user_data
     assert "is_active" in user_data
     assert "inactive_since" in user_data
 
     assert user_data["email"] == "compliance@test.com"
-    assert user_data["role"] == "admin"
+    assert user_data["roles"] == []
     assert user_data["is_active"] is True
 
 
