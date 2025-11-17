@@ -12,11 +12,6 @@ class Config:
     SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URI", "sqlite:///users.db")
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
-    # Validate required secrets
-    if not SECRET_KEY:
-        print("ERROR: SECRET_KEY environment variable is required", file=sys.stderr)
-        sys.exit(1)
-
 
 class DevelopmentConfig(Config):
     DEBUG = True
@@ -26,9 +21,15 @@ class DevelopmentConfig(Config):
 class ProductionConfig(Config):
     DEBUG = False
 
+    # Validate in production only
+    if not Config.SECRET_KEY:
+        print("ERROR: SECRET_KEY environment variable is required.", file=sys.stderr)
+        sys.exit(1)
+
 
 class TestingConfig(Config):
     TESTING = True
-    SECRET_KEY = "test-secret-key"
     SQLALCHEMY_DATABASE_URI = "sqlite:///:memory:"
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
     WTF_CSRF_ENABLED = False
+    SECRET_KEY = "test-secret-key-not-for-production"
