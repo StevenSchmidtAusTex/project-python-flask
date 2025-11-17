@@ -61,6 +61,8 @@ def toggle_user_active(user_id):
 def get_user_report(status="all"):
     query = User.query
 
+    # ISSUE IV rework to include role in user list
+
     if status == "active":
         query = query.filter(User.inactive_since.is_(None))
     elif status == "inactive":
