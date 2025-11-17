@@ -70,7 +70,7 @@ User management API with role-based access control and compliance reporting.
 
 Note: New users are created as inactive by default and must be activated before login.
 
-```powershell
+```bash
 curl -X POST http://127.0.0.1:5000/register `
   -H "Content-Type: application/json" `
   -d '{"username":"Dev Userson", "email":"dev.userson@example.com", "password":"sosecure"}'
@@ -78,7 +78,7 @@ curl -X POST http://127.0.0.1:5000/register `
 
 **Activate/Deactivate a User**
 
-```powershell
+```bash
 # Toggle user active status (replace 1 with actual user_id)
 curl -X PATCH http://127.0.0.1:5000/users/1/toggle-active
 ```
@@ -95,7 +95,7 @@ Response for inactive user: `403 Forbidden`
 
 **User Access Report (Compliance)**
 
-```powershell
+```bash
 # All users
 curl http://127.0.0.1:5000/users/report
 
@@ -108,7 +108,7 @@ curl http://127.0.0.1:5000/users/report?status=inactive
 
 **Create a Role**
 
-```powershell
+```bash
 curl -X POST http://127.0.0.1:5000/roles `
   -H "Content-Type: application/json" `
   -d '{"role_name":"Developer", "department_name":"Engineering"}'
@@ -118,13 +118,13 @@ Note: The combination of `role_name` and `department_name` must be unique.
 
 **List All Roles**
 
-```powershell
+```bash
 curl http://127.0.0.1:5000/roles
 ```
 
 **Assign a Role to a User**
 
-```powershell
+```bash
 curl -X POST http://127.0.0.1:5000/users/1/roles `
   -H "Content-Type: application/json" `
   -d '{"role_id":1}'
@@ -132,13 +132,13 @@ curl -X POST http://127.0.0.1:5000/users/1/roles `
 
 **Get Roles for a User**
 
-```powershell
+```bash
 curl http://127.0.0.1:5000/users/1/roles
 ```
 
 **Remove a Role from a User**
 
-```powershell
+```bash
 curl -X DELETE http://127.0.0.1:5000/users/1/roles/1
 ```
 
