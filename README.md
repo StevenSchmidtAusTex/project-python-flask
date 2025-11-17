@@ -71,23 +71,22 @@ User management API with role-based access control and compliance reporting.
 Note: New users are created as inactive by default and must be activated before login.
 
 ```bash
-curl -X POST http://127.0.0.1:5000/register `
-  -H "Content-Type: application/json" `
+curl -X POST http://127.0.0.1:5000/register \
+  -H "Content-Type: application/json" \
   -d '{"username":"Dev Userson", "email":"dev.userson@example.com", "password":"sosecure"}'
 ```
 
 **Activate/Deactivate a User**
 
 ```bash
-# Toggle user active status (replace 1 with actual user_id)
 curl -X PATCH http://127.0.0.1:5000/users/1/toggle-active
 ```
 
 **Login**
 
-```powershell
-curl -X POST http://127.0.0.1:5000/login `
-  -H "Content-Type: application/json" `
+```bash
+curl -X POST http://127.0.0.1:5000/login \
+  -H "Content-Type: application/json" \
   -d '{"email":"dev.userson@example.com", "password":"sosecure"}'
 ```
 
@@ -109,9 +108,9 @@ curl http://127.0.0.1:5000/users/report?status=inactive
 **Create a Role**
 
 ```bash
-curl -X POST http://127.0.0.1:5000/roles `
-  -H "Content-Type: application/json" `
-  -d '{"role_name":"Developer", "department_name":"Engineering"}'
+curl -X POST http://127.0.0.1:5000/roles \
+  -H "Content-Type: application/json" \
+  -d '{"role_name":"Developer", "department_name":"Martial"}'
 ```
 
 Note: The combination of `role_name` and `department_name` must be unique.
@@ -125,8 +124,8 @@ curl http://127.0.0.1:5000/roles
 **Assign a Role to a User**
 
 ```bash
-curl -X POST http://127.0.0.1:5000/users/1/roles `
-  -H "Content-Type: application/json" `
+curl -X POST http://127.0.0.1:5000/users/1/roles \
+  -H "Content-Type: application/json" \
   -d '{"role_id":1}'
 ```
 
