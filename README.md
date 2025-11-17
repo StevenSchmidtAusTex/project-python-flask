@@ -37,13 +37,13 @@ User management API with role-based access control and compliance reporting.
    ```
 
 3. Set up environment variables
-   
+
    Copy the .env file and generate a secret key:
    ```powershell
    Copy-Item .env.example .env
    python -c "import secrets; print(secrets.token_hex(32))"
    ```
-   
+
    Update `.env` with generated secret key:
    ```
    SECRET_KEY=your-generated-secret-key-here
