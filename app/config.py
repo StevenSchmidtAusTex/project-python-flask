@@ -21,11 +21,6 @@ class DevelopmentConfig(Config):
 class ProductionConfig(Config):
     DEBUG = False
 
-    # Validate in production only
-    if not Config.SECRET_KEY:
-        print("ERROR: SECRET_KEY environment variable is required.", file=sys.stderr)
-        sys.exit(1)
-
 
 class TestingConfig(Config):
     TESTING = True
@@ -33,3 +28,14 @@ class TestingConfig(Config):
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     WTF_CSRF_ENABLED = False
     SECRET_KEY = "test-secret-key-not-for-production"
+
+
+# Validate production config only when it's actually used
+def validate_production_config():
+    if not os.getenv("SECRET_KEY"):
+        print("ERROR: SECRET_KEY environment variable is required.", file=sys.stderr)
+        print(
+            'Generate one with: python -c "import secrets; print(secrets.token_hex(32))"',
+            file=sys.stderr,
+        )
+        sys.exit(1)
