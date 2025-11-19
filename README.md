@@ -110,7 +110,7 @@ curl http://127.0.0.1:5000/users/report?status=inactive
 ```bash
 curl -X POST http://127.0.0.1:5000/roles \
   -H "Content-Type: application/json" \
-  -d '{"role_name":"Developer", "department_name":"Martial"}'
+  -d '{"role_name":"Fighter", "department_name":"Martial"}'
 ```
 
 Note: The combination of `role_name` and `department_name` must be unique.
