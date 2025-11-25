@@ -12,7 +12,7 @@ User management API with role-based access control and compliance reporting.
 
 ### Further Development (I may develop these prior to Final Interview)
 
-- Fix further security issues (such as passwords being in plain text)
+- [RESOLVED] Fix further security issues (such as passwords being in plain text)
 - Demonstrate debugging practices and IDE integration
 - PostGres migration would be also ideal
 
@@ -176,7 +176,7 @@ GitHub Actions runs linting and tests on every push and pull request. See `.gith
 - `id` - Primary Key
 - `username` - Unique, Not Null
 - `email` - Unique, Not Null
-- `password` - Not Null (stored in plain text - known security issue)
+- `password` - Not Null (now hashed)
 - `inactive_since` - DateTime, Nullable (tracks when user was deactivated)
 - Many-to-Many relationship with `Role`
 

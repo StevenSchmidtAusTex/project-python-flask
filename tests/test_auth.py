@@ -156,3 +156,57 @@ def test_toggling_user_to_inactive_sets_timestamp(client, app):
     json_data = response.get_json()
     assert json_data["is_active"] is False
     assert json_data["inactive_since"] is not None
+
+
+def test_password_is_hashed_on_registration(client, app):
+    data = {
+        "username": "secureuser",
+        "email": "secure@example.com",
+        "password": "MySecretPassword123",
+    }
+    response = client.post("/register", json=data)
+    assert response.status_code == 201
+
+    with app.app_context():
+        user = User.query.filter_by(email="secure@example.com").first()
+        assert user.password != "MySecretPassword123"
+        assert user.password.startswith("$2b$")
+
+
+def test_login_with_wrong_password_fails(client, app):
+    client.post(
+        "/register",
+        json={
+            "username": "wrongpass",
+            "email": "wrong@example.com",
+            "password": "CorrectPassword",
+        },
+    )
+
+    with app.app_context():
+        user = User.query.filter_by(email="wrong@example.com").first()
+        user.inactive_since = None
+        from app.extensions import db
+
+        db.session.commit()
+
+    response = client.post(
+        "/login", json={"email": "wrong@example.com", "password": "WrongPassword"}
+    )
+    assert response.status_code == 401
+
+
+def test_bcrypt_work_factor(client, app):
+    client.post(
+        "/register",
+        json={
+            "username": "worktest",
+            "email": "work@example.com",
+            "password": "TestPassword",
+        },
+    )
+
+    with app.app_context():
+        user = User.query.filter_by(email="work@example.com").first()
+        work_factor = int(user.password.split("$")[2])
+        assert 12 <= work_factor <= 14

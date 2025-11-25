@@ -4,10 +4,11 @@ from ..extensions import db, bcrypt
 
 
 def create_user(username, email, password):
+    hashed_password = bcrypt.generate_password_hash(password).decode("utf-8")
     new_user = User(
         username=username,
         email=email,
-        password=password,
+        password=hashed_password,
         inactive_since=datetime.utcnow(),
     )
     db.session.add(new_user)
@@ -18,19 +19,13 @@ def create_user(username, email, password):
 def check_password(email, password):
     user = User.query.filter_by(email=email).first()
 
-    if user:
-        pass
-        # print(f"found user: {user.username}")
-        # print(f"email: {email}")
-        # print(f"password: {password}")
-        # print(f"db password: {user.password}")
-    else:
-        print("user not found")
-
-    if user.password == password:
-        return True
-    else:
+    if not user:
+        bcrypt.check_password_hash(
+            bcrypt.generate_password_hash("dummy").decode("utf-8"), password
+        )
         return False
+
+    return bcrypt.check_password_hash(user.password, password)
 
 
 def toggle_user_active(user_id):
